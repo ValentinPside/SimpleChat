@@ -45,50 +45,8 @@ public class SimpleChat implements ISimpleChat{
         } catch (Exception e) {
             throw new ChatException();
         }
-        inputThread = new Thread(() -> {
-                String message = "";
-                while (true){
-                    try {
-                        message = getMessage();
-                    } catch (ChatException e) {
-                        e.printStackTrace();
-                    }
-                    if(message.equals("exit")){
-                        try {
-                            close();
-                        } catch (ChatException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if(!message.isBlank() && message != null) {
-                        System.out.println("Server: " + message);
-                    }
-                }
-            });
-        inputThread.start();
-            while (true) {
-                String message = "";
-                while (true){
-                    scan = new Scanner(System.in);
-                    message = scan.nextLine();
-                    if(message.equals("exit")){
-                        try {
-                            sendMessage(message);
-                            close();
-                        } catch (ChatException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if(!message.isBlank() && message != null){
-                        try {
-                            sendMessage(message);
-                            System.out.println("Client: " + message);
-                        } catch (ChatException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
+        inputThread("Server");
+        outPut("Client");
     }
 
     @Override
@@ -103,48 +61,10 @@ public class SimpleChat implements ISimpleChat{
             System.out.println("Now you can write messages\n"
                     + "If you want to close the chat write 'exit'");
         } catch (Exception e) {
-            throw new ChatException();
+            e.getMessage();
         }
-        inputThread = new Thread(() -> {
-                String message = "";
-                while (true){
-                    try {
-                        message = getMessage();
-                    } catch (ChatException e) {
-                        e.printStackTrace();
-                    }
-                    if(message.equals("exit")){
-                        try {
-                            close();
-                        } catch (ChatException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if(!message.isBlank() && message != null) {
-                        System.out.println("Client: " + message);
-                    }
-                }
-            });
-        inputThread.start();
-            while (true) {            
-                String message = "";
-                while (true){
-                    try {
-                        scan = new Scanner(System.in);
-                        message = scan.nextLine();
-                    if(message.equals("exit")){
-                        sendMessage(message);
-                        close();
-                    }
-                     if(!message.isBlank() && message != null){
-                         sendMessage(message);
-                         System.out.println("Server: " + message);
-                     }
-                    } catch (Exception e) {
-                        e.getMessage();
-                    }
-                }
-            }
+        inputThread("Client");
+        outPut("Server");
     }
 
     @Override
@@ -185,5 +105,51 @@ public class SimpleChat implements ISimpleChat{
             e.getMessage();
         }
 
+    }
+    
+    public void inputThread(String cOrS){
+        inputThread = new Thread(() -> {
+                String message = "";
+                while (true){
+                    try {
+                        message = getMessage();
+                    } catch (ChatException e) {
+                        e.printStackTrace();
+                    }
+                    if(message.equals("exit")){
+                        try {
+                            close();
+                        } catch (ChatException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(!message.isBlank() && message != null) {
+                        System.out.println(cOrS + ": " + message);
+                    }
+                }
+            });
+        inputThread.start();
+    }
+    
+    public void outPut(String cOrS){
+        while (true) {            
+                String message = "";
+                while (true){
+                    try {
+                        scan = new Scanner(System.in);
+                        message = scan.nextLine();
+                    if(message.equals("exit")){
+                        sendMessage(message);
+                        close();
+                    }
+                     if(!message.isBlank() && message != null){
+                         sendMessage(message);
+                         System.out.println(cOrS + ": " + message);
+                     }
+                    } catch (Exception e) {
+                        e.getMessage();
+                    }
+                }
+            }
     }
 }
